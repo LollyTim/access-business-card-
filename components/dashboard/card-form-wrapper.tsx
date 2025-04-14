@@ -5,6 +5,7 @@ import { CardPreview } from "./card-preview";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface BusinessCardFormData {
     fullName: string;
@@ -41,7 +42,6 @@ export function CardFormWrapper() {
                 description: "Your business card has been created.",
             });
 
-            // Refresh the table data
             router.refresh();
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -50,29 +50,32 @@ export function CardFormWrapper() {
                 description: error instanceof Error ? error.message : "Something went wrong",
                 variant: "destructive",
             });
-            throw error; // Re-throw to be handled by the form component
+            throw error;
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="rounded-lg bg-gray-50 p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-7xl mx-auto">
-            <h2 className="mb-1 text-center text-lg sm:text-xl md:text-2xl font-bold">Business Card Form</h2>
-            <p className="mb-3 sm:mb-4 md:mb-6 lg:mb-8 text-center text-xs sm:text-sm text-gray-500">Create a new card form</p>
+        <Card className="w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+            <div className="space-y-4 sm:space-y-6">
+                <div className="text-center space-y-2">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Business Card Form</h2>
+                    <p className="text-sm sm:text-base text-muted-foreground">Create your professional business card</p>
+                </div>
 
-            <div className="grid gap-6 md:gap-8 lg:grid-cols-2 lg:gap-10">
-                {/* Live Preview Card */}
-                <div className="order-2 lg:order-1 flex justify-center items-start">
-                    <div className="w-full max-w-md">
-                        <CardPreview />
+                <div className="grid gap-6 md:gap-8 lg:grid-cols-2 lg:gap-10">
+                    <div className="order-2 lg:order-1">
+                        <div className="sticky top-4">
+                            <CardPreview />
+                        </div>
+                    </div>
+
+                    <div className="order-1 lg:order-2">
+                        <CardForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
                     </div>
                 </div>
-                {/* Form Fields */}
-                <div className="order-1 lg:order-2">
-                    <CardForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-                </div>
             </div>
-        </div>
+        </Card>
     );
 }

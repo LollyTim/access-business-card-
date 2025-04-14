@@ -9,6 +9,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { Download, Eye, FileDown, RotateCw } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +25,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { BusinessCard } from "@/types/business-card";
 import { generateBusinessCardPDF } from "@/lib/pdf-generator";
 import { toast } from "sonner";
+
+const ITEMS_PER_PAGE = 5;
 
 function generateQRCodeUrl(businessCard: BusinessCard) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -58,7 +69,13 @@ export function BusinessCardsTable() {
     const [businessCards, setBusinessCards] = useState<BusinessCard[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [generatingPDF, setGeneratingPDF] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const { toast: uiToast } = useToast();
+
+    const totalPages = Math.ceil(businessCards.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentCards = businessCards.slice(startIndex, endIndex);
 
     const fetchBusinessCards = async () => {
         try {
@@ -69,6 +86,7 @@ export function BusinessCardsTable() {
             }
             const data = await response.json();
             setBusinessCards(data);
+            setCurrentPage(1); // Reset to first page when fetching new data
         } catch (error) {
             console.error('Error fetching business cards:', error);
             uiToast({
@@ -91,7 +109,6 @@ export function BusinessCardsTable() {
             const qrCodeUrl = generateQRCodeUrl(card);
             const pdfBlob = await generateBusinessCardPDF(card, qrCodeUrl);
 
-            // Create a download link
             const url = window.URL.createObjectURL(pdfBlob);
             const link = document.createElement('a');
             link.href = url;
@@ -127,7 +144,7 @@ export function BusinessCardsTable() {
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden sm:block rounded-md border overflow-x-auto">
+            <div className="hidden sm:block rounded-md border">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -139,7 +156,7 @@ export function BusinessCardsTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {businessCards.map((card) => (
+                        {currentCards.map((card) => (
                             <TableRow key={card.id}>
                                 <TableCell className="font-medium">{card.fullName}</TableCell>
                                 <TableCell>{card.position}</TableCell>
@@ -193,7 +210,7 @@ export function BusinessCardsTable() {
 
             {/* Mobile Card View */}
             <div className="grid grid-cols-1 gap-4 sm:hidden">
-                {businessCards.map((card) => (
+                {currentCards.map((card) => (
                     <div key={card.id} className="rounded-lg border bg-card p-4 space-y-3">
                         <div className="flex justify-between items-start gap-2">
                             <div>
@@ -248,6 +265,75 @@ export function BusinessCardsTable() {
                     </div>
                 )}
             </div>
+
+            {/* Pagination */}
+            {businessCards.length > 0 && (
+                <Pagination className="justify-center">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1"
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-4 w-4"
+                                >
+                                    <path d="m15 18-6-6 6-6" />
+                                </svg>
+                                <span>Previous</span>
+                            </Button>
+                        </PaginationItem>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <PaginationItem key={page}>
+                                <Button
+                                    variant={currentPage === page ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </Button>
+                            </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1"
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                            >
+                                <span>Next</span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-4 w-4"
+                                >
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </Button>
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            )}
         </div>
     );
 } 
