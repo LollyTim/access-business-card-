@@ -1,0 +1,197 @@
+'use client';
+
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { FileDown } from "lucide-react";
+import { BusinessCard } from "@/types/business-card";
+import { generateBusinessCardPDF } from "@/lib/pdf-generator";
+import { useState } from "react";
+import { toast } from "sonner";
+
+function generateQRCodeUrl(businessCard: BusinessCard) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const cardUrl = `${baseUrl}/business-cards/${businessCard.username}`;
+
+    const config = {
+        body: "pointed",
+        eye: "frame14",
+        eyeBall: "ball14",
+        erf1: [],
+        erf2: ["fh"],
+        erf3: ["fv"],
+        brf1: [],
+        brf2: ["fh"],
+        brf3: ["fv"],
+        bodyColor: "#000000",
+        bgColor: "#FFFFFF",
+        eye1Color: "#000000",
+        eye2Color: "#000000",
+        eye3Color: "#000000",
+        eyeBall1Color: "#000000",
+        eyeBall2Color: "#000000",
+        eyeBall3Color: "#000000",
+        gradientOnEyes: false,
+        logoMode: "clean",
+        logo: "https://asset.brandfetch.io/idPXJmyni4/idSLulezX4.png",
+    };
+
+    const params = new URLSearchParams({
+        data: cardUrl,
+        size: "360",
+        config: JSON.stringify(config),
+        file: "svg"
+    });
+
+    return `/api/qr-code?${params.toString()}`;
+}
+
+interface BusinessCardDisplayProps {
+    businessCard: BusinessCard;
+}
+
+export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) {
+    const [isGenerating, setIsGenerating] = useState(false);
+    const qrCodeUrl = generateQRCodeUrl(businessCard);
+    const address = "Head Office: 14/15 Prince Alana Abiodun, Oniru Street, Oniru Estate, Victoria Island. Lagos, Nigeria";
+    const website = "www.accessbankplc.com";
+
+    const handleDownloadPDF = async () => {
+        try {
+            setIsGenerating(true);
+            const pdfBlob = await generateBusinessCardPDF(businessCard, qrCodeUrl);
+
+            // Create a download link
+            const url = window.URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${businessCard.fullName.replace(/\s+/g, '-').toLowerCase()}-business-card.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success('PDF generated successfully');
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            toast.error('Failed to generate PDF');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    return (
+        <div className="flex min-h-screen flex-col bg-white p-4 md:p-8">
+            <div className="mx-auto w-full max-w-4xl">
+                <div className="mb-8 flex items-center justify-between">
+                    <h1 className="text-2xl font-bold md:text-3xl">Business Card Details</h1>
+                    <Link href="/dashboard">
+                        <Button variant="outline">Back to Dashboard</Button>
+                    </Link>
+                </div>
+
+                <div className="flex flex-col gap-8 rounded-lg bg-white p-4 shadow-lg md:p-8">
+                    {/* Business Card Preview */}
+                    <div className="flex flex-col items-center justify-center gap-8">
+                        {/* Front of the card */}
+                        <div className="relative h-[368px] w-full max-w-[552px] overflow-hidden rounded-lg bg-white p-8 shadow-md">
+                            {/* Access Bank Logo */}
+                            <div className="z-50 w-full justify-end items-end flex">
+                                <img src="/access-logo.png" width={200} alt="Access Bank Logo" />
+                            </div>
+
+                            <div className="">
+                                <h3 className="text-2xl font-bold text-[#FF5722]">{businessCard.fullName}</h3>
+                                <p className="text-lg font-medium text-black">{businessCard.position}</p>
+
+                                <div className="mt-6 text-base">
+                                    <p className="mb-1 w-[320px] font-semibold text-black">{address}</p>
+
+                                    <div className="flex items-start">
+                                        <span className="mr-2 font-bold text-[#FF5722]">M</span>
+                                        <span className="font-semibold">{businessCard.phone}</span>
+                                    </div>
+
+                                    <div className="flex items-start">
+                                        <span className="mr-2 font-bold text-[#FF5722]">E</span>
+                                        <span className="font-semibold">{businessCard.email}</span>
+                                    </div>
+                                </div>
+
+                                <div className="text-right">
+                                    <span className="text-[#FF5722]">{website}</span>
+                                </div>
+                            </div>
+
+                            {/* QR Code */}
+                            <div className="absolute bottom-24 right-8 h-[160px] w-[160px] overflow-hidden rounded-md">
+                                <img
+                                    src={qrCodeUrl}
+                                    alt={`QR Code for ${businessCard.username}`}
+                                    className="h-full w-full object-contain p-2"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Back of the card */}
+                        <div className="relative h-[368px] w-[550px] max-w-[550px] overflow-hidden rounded-lg bg-white shadow-md">
+                            {/* Blue section */}
+                            <div
+                                className="absolute bottom-0 left-0 top-0 w-[65%] bg-[#0039CB]"
+                                style={{ clipPath: "polygon(0 0, 78% 0, 0 100%)" }}
+                            ></div>
+
+                            {/* Orange diagonal stripe */}
+                            <div
+                                className="absolute bottom-0 left-0 right-0 top-0 bg-[#FF5722]"
+                                style={{
+                                    clipPath: "polygon(50% 0, 60% 0, 10% 100%, 0 100%)",
+                                    width: "100%"
+                                }}
+                            ></div>
+
+                            {/* "more than banking" text */}
+                            <div
+                                className="absolute bottom-8 right-12 text-[1.5rem] font-bold text-[#FF5722]"
+                                style={{ fontFamily: "var(--font-helvetica-neue, Helvetica Neue, sans-serif)" }}
+                            >
+                                more than banking
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Download Options */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                        <Button
+                            className="w-full flex items-center justify-center gap-2 sm:w-auto"
+                            onClick={handleDownloadPDF}
+                            disabled={isGenerating}
+                        >
+                            <FileDown className="h-4 w-4" />
+                            {isGenerating ? 'Generating PDF...' : 'Download PDF'}
+                        </Button>
+
+                        <Link href={`/api/business-cards/vcard/${businessCard.username}`}>
+                            <Button variant="outline" className="w-full flex items-center justify-center gap-2 sm:w-auto">
+                                <FileDown className="h-4 w-4" />
+                                Download vCard
+                            </Button>
+                        </Link>
+                    </div>
+
+                    {/* Card Details */}
+                    <div className="mt-4 space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm">
+                        <h2 className="text-lg font-semibold">Card Information</h2>
+                        <p><strong>Name:</strong> {businessCard.fullName}</p>
+                        <p><strong>Position:</strong> {businessCard.position}</p>
+                        <p><strong>Email:</strong> {businessCard.email}</p>
+                        <p><strong>Phone:</strong> {businessCard.phone}</p>
+                        <p><strong>Username:</strong> {businessCard.username}</p>
+                        <p><strong>Created:</strong> {new Date(businessCard.createdAt).toLocaleDateString()}</p>
+                        <p><strong>Last Updated:</strong> {new Date(businessCard.updatedAt).toLocaleDateString()}</p>
+                        <p><strong>Downloads:</strong> {businessCard.downloads}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+} 

@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isAdmin   Boolean  @default(false)
+
+  @@map("users") // This ensures the table name is lowercase
+}
+
+model BusinessCard {
+  id        String   @id @default(cuid())
+  username  String   @unique // This will be extracted from email
+  fullName  String
+  position  String
+  phone     String
+  email     String   @unique
+  imageUrl  String? // Cloudinary URL for the profile image
+  qrCodeUrl String? // Generated QR code URL
+  downloads Int      @default(0) // Track number of downloads
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@map("business_cards") // Ensure consistent lowercase table name
+}
