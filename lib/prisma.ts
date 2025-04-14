@@ -4,14 +4,10 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 // Parse DATABASE_URL from environment and handle potential issues
 const getDatabaseUrl = () => {
   const envUrl = process.env.DATABASE_URL;
-
   if (!envUrl) {
-    console.warn(
-      "DATABASE_URL environment variable not found, using fallback connection string"
-    );
-    return "postgresql://postgres:postgres@localhost:5432/access_business_card";
+    console.error("DATABASE_URL environment variable not found");
+    throw new Error("DATABASE_URL environment variable not found");
   }
-
   try {
     // Validate URL format
     new URL(envUrl);
@@ -21,7 +17,7 @@ const getDatabaseUrl = () => {
       "Invalid DATABASE_URL format:",
       error instanceof Error ? error.message : String(error)
     );
-    return "postgresql://postgres:postgres@localhost:5432/access_business_card";
+    throw new Error("Invalid DATABASE_URL format");
   }
 };
 
@@ -40,8 +36,7 @@ const prismaClientSingleton = () => {
       "Failed to initialize Prisma client:",
       error instanceof Error ? error.message : String(error)
     );
-    // Return a basic client, which will fail on operations but prevent app crashes
-    return new PrismaClient().$extends(withAccelerate());
+    throw error;
   }
 };
 
