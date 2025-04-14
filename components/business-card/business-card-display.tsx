@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 function generateQRCodeUrl(businessCard: BusinessCard) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const cardUrl = `${baseUrl}/business-cards/${businessCard.username}`;
+    const cardUrl = `${baseUrl}/${businessCard.username}`;
 
     const config = {
         body: "pointed",
