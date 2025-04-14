@@ -149,3 +149,38 @@ export async function GET(req: Request) {
     );
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Business card ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const businessCard = await prisma.businessCard.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(businessCard);
+  } catch (error) {
+    console.error("Error deleting business card:", error);
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return NextResponse.json(
+        { error: "Business card not found" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Failed to delete business card" },
+      { status: 500 }
+    );
+  }
+}

@@ -19,12 +19,23 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
-import { Download, Eye, FileDown, RotateCw } from "lucide-react";
+import { Download, Eye, FileDown, RotateCw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 import { BusinessCard } from "@/types/business-card";
 import { generateBusinessCardPDF } from "@/lib/pdf-generator";
 import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -70,6 +81,7 @@ export function BusinessCardsTable() {
     const [isLoading, setIsLoading] = useState(true);
     const [generatingPDF, setGeneratingPDF] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [deletingCard, setDeletingCard] = useState<string | null>(null);
     const { toast: uiToast } = useToast();
 
     const totalPages = Math.ceil(businessCards.length / ITEMS_PER_PAGE);
@@ -127,6 +139,27 @@ export function BusinessCardsTable() {
         }
     };
 
+    const handleDeleteCard = async (cardId: string) => {
+        try {
+            setDeletingCard(cardId);
+            const response = await fetch(`/api/business-cards?id=${cardId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete business card');
+            }
+
+            toast.success('Business card deleted successfully');
+            await fetchBusinessCards(); // Refresh the list
+        } catch (error) {
+            console.error('Error deleting business card:', error);
+            toast.error('Failed to delete business card');
+        } finally {
+            setDeletingCard(null);
+        }
+    };
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
@@ -152,7 +185,7 @@ export function BusinessCardsTable() {
                             <TableHead className="min-w-[120px]">Position</TableHead>
                             <TableHead className="min-w-[180px]">Email</TableHead>
                             <TableHead className="min-w-[120px]">Phone</TableHead>
-                            <TableHead className="min-w-[140px] text-right">Actions</TableHead>
+                            <TableHead className="min-w-[180px] text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -193,6 +226,42 @@ export function BusinessCardsTable() {
                                                 <Download className="h-4 w-4" />
                                             </Link>
                                         </Button>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 w-8 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Delete Business Card</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Are you sure you want to delete this business card? This action cannot be undone.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                        onClick={() => handleDeleteCard(card.id)}
+                                                        disabled={deletingCard === card.id}
+                                                    >
+                                                        {deletingCard === card.id ? (
+                                                            <span className="flex items-center gap-2">
+                                                                <span className="h-4 w-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
+                                                                Deleting...
+                                                            </span>
+                                                        ) : (
+                                                            "Delete"
+                                                        )}
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -247,6 +316,42 @@ export function BusinessCardsTable() {
                                         <Download className="h-4 w-4" />
                                     </Link>
                                 </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-8 w-8 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Delete Business Card</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Are you sure you want to delete this business card? This action cannot be undone.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                onClick={() => handleDeleteCard(card.id)}
+                                                disabled={deletingCard === card.id}
+                                            >
+                                                {deletingCard === card.id ? (
+                                                    <span className="flex items-center gap-2">
+                                                        <span className="h-4 w-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
+                                                        Deleting...
+                                                    </span>
+                                                ) : (
+                                                    "Delete"
+                                                )}
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         </div>
                         <div className="space-y-1">
