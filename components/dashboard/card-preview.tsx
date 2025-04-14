@@ -20,7 +20,7 @@ export function CardPreview() {
                 setUsername(extractedUsername);
 
                 // Generate QR code URL with Access Bank branding
-                const qrData = `${window.location.origin}/${extractedUsername}`;
+                const qrData = `${process.env.NEXT_PUBLIC_APP_URL}/${extractedUsername}`;
                 const url = generateQRCodeUrl({
                     data: qrData,
                     size: 360,

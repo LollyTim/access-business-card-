@@ -22,7 +22,7 @@ const TEXT_SIZES = {
 const SPACING = {
   margin: 5 * SCALE_FACTOR, // Standard margin
   contactSpacing: 4 * SCALE_FACTOR, // Space between contact elements
-  addressSpacing: 8 * SCALE_FACTOR, // Space after address
+  addressSpacing: 3 * SCALE_FACTOR, // Space after address
 };
 
 // Professional color palette (Access Bank colors)
@@ -64,7 +64,7 @@ export async function generateBusinessCardPDF(
       });
 
       // Position logo at top right with professional dimensions
-      doc.addImage(logoDataUrl, "PNG", CARD_WIDTH - 45, 5, 40, 12);
+      doc.addImage(logoDataUrl, "PNG", CARD_WIDTH - 45, 5, 40, 10);
     } catch (error) {
       console.error("Error loading logo:", error);
     }
@@ -130,7 +130,7 @@ export async function generateBusinessCardPDF(
     // Add QR Code with professional sizing and positioning
     try {
       // Generate QR code URL with consistent format
-      const qrData = `http://localhost:3000/${businessCard.username}`;
+      const qrData = `${process.env.NEXT_PUBLIC_APP_URL}/${businessCard.username}`;
 
       // Configure QR code with Access Bank branding
       const config = {

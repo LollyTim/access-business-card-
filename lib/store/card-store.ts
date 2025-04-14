@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface FormData {
+export interface FormData {
   fullName: string;
   position: string;
   phone: string;

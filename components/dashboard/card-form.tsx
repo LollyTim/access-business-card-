@@ -8,17 +8,10 @@ import { Label } from "@/components/ui/label";
 import { useCardStore } from "@/lib/store/card-store";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-
-interface BusinessCardFormData {
-    fullName: string;
-    position: string;
-    phone: string;
-    email: string;
-    image: string | null;
-}
+import { FormData } from "@/lib/store/card-store";
 
 interface CardFormProps {
-    onSubmit: (data: BusinessCardFormData) => Promise<void>;
+    onSubmit: (data: FormData) => Promise<void>;
     isSubmitting: boolean;
 }
 
@@ -28,7 +21,7 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const { toast } = useToast();
 
-    const validateForm = (data: Partial<BusinessCardFormData>): boolean => {
+    const validateForm = (data: FormData): boolean => {
         if (!data.fullName?.trim()) {
             toast({ title: "Error", description: "Full name is required", variant: "destructive" });
             return false;
@@ -55,11 +48,11 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const updatedData = { ...formData, [name]: value.trim() } as BusinessCardFormData;
+        const updatedData = { ...formData, [name]: value.trim() } as FormData;
 
         if (name === 'email') {
             const username = value.split('@')[0].toLowerCase();
-            setFormData({ ...updatedData, username } as BusinessCardFormData);
+            setFormData({ ...updatedData, username } as FormData);
         } else {
             setFormData(updatedData);
         }
@@ -93,17 +86,27 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const base64String = reader.result as string;
-                    setFormData({ ...formData, image: base64String } as BusinessCardFormData);
-                    setImagePreview(base64String);
+                    if (base64String && base64String.startsWith('data:image/')) {
+                        setFormData({ ...formData, image: base64String });
+                        setImagePreview(base64String);
+                        console.log('Image processed successfully');
+                    } else {
+                        throw new Error('Invalid image format');
+                    }
+                };
+                reader.onerror = () => {
+                    throw new Error('Failed to read image file');
                 };
                 reader.readAsDataURL(file);
                 setImageFile(file);
             } catch (error) {
+                console.error('Image processing error:', error);
                 toast({
                     title: "Error",
-                    description: "Failed to process the image",
+                    description: "Failed to process the image. Please try again.",
                     variant: "destructive"
                 });
+                removeImage();
             }
         }
     };
@@ -111,7 +114,7 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
     const removeImage = () => {
         setImageFile(null);
         setImagePreview(null);
-        setFormData({ ...formData, image: null } as BusinessCardFormData);
+        setFormData({ ...formData, image: null });
         const input = document.getElementById('image') as HTMLInputElement;
         if (input) input.value = '';
     };
@@ -126,15 +129,17 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
         setIsGenerating(true);
         try {
             // Create a clean data object for submission
-            const submissionData: BusinessCardFormData = {
+            const submissionData: FormData = {
                 fullName: formData.fullName.trim(),
                 position: formData.position.trim(),
                 phone: formData.phone.trim(),
                 email: formData.email.trim(),
-                image: formData.image || null
+                image: formData.image // This should be the base64 string
             };
 
+            console.log('Submitting form with image:', !!submissionData.image);
             await onSubmit(submissionData);
+            console.log('Form submitted successfully');
 
             // Reset form after successful submission
             setFormData({

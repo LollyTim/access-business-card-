@@ -21,12 +21,17 @@ export async function POST(req: Request) {
 
     // Upload image to Cloudinary if provided
     let imageUrl = null;
-    if (image) {
+    if (image && image.startsWith("data:image/")) {
       try {
+        console.log("Uploading image to Cloudinary...");
         imageUrl = await uploadImage(image);
+        console.log("Image uploaded successfully:", imageUrl);
       } catch (error) {
-        console.error("Error uploading image:", error);
-        // Continue without image if upload fails
+        console.error("Error uploading image to Cloudinary:", error);
+        return NextResponse.json(
+          { error: "Failed to upload image" },
+          { status: 500 }
+        );
       }
     }
 
@@ -96,21 +101,11 @@ export async function POST(req: Request) {
 
       return NextResponse.json(businessCard);
     } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = error.message || "Database operation failed";
-        console.error("Database error:", errorMessage);
-
-        if (errorMessage.includes("Unique constraint")) {
-          return NextResponse.json(
-            {
-              error:
-                "A business card with this email or username already exists",
-            },
-            { status: 409 }
-          );
-        }
-      }
-      throw error;
+      console.error("Database operation error:", error);
+      return NextResponse.json(
+        { error: "Failed to save business card" },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Error creating business card:", error);
