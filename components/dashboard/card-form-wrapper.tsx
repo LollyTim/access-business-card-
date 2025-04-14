@@ -57,16 +57,22 @@ export function CardFormWrapper() {
     };
 
     return (
-        <div className="rounded-lg bg-gray-50 p-8">
-            <h2 className="mb-1 text-center text-2xl font-bold">Business Card Form</h2>
-            <p className="mb-8 text-center text-sm text-gray-500">Create a new card form</p>
+        <div className="rounded-lg bg-gray-50 p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+            <h2 className="mb-1 text-center text-lg sm:text-xl md:text-2xl font-bold">Business Card Form</h2>
+            <p className="mb-3 sm:mb-4 md:mb-6 lg:mb-8 text-center text-xs sm:text-sm text-gray-500">Create a new card form</p>
 
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-6 md:gap-8 lg:grid-cols-2 lg:gap-10">
                 {/* Live Preview Card */}
-                <CardPreview />
+                <div className="order-2 lg:order-1 flex justify-center items-start">
+                    <div className="w-full max-w-md">
+                        <CardPreview />
+                    </div>
+                </div>
                 {/* Form Fields */}
-                <CardForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                <div className="order-1 lg:order-2">
+                    <CardForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                </div>
             </div>
         </div>
     );
-} 
+}

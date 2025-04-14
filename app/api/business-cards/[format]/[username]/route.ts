@@ -89,11 +89,12 @@ export async function GET(
       const vcard = [
         "BEGIN:VCARD",
         "VERSION:3.0",
+        `N:${businessCard.fullName}`,
         `FN:${businessCard.fullName}`,
         `TITLE:${businessCard.position}`,
         `TEL:${businessCard.phone}`,
         `EMAIL:${businessCard.email}`,
-        "ORG:Access Bank",
+        "ORG:Access Bank PLC",
         "ADR:;;14/15 Prince Alana Abiodun\\, Oniru Street\\,;Oniru Estate\\, Victoria Island;Lagos;;Nigeria",
         "URL:https://www.accessbankplc.com",
         "END:VCARD",

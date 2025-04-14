@@ -80,31 +80,31 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
     };
 
     return (
-        <div className="flex min-h-screen flex-col bg-white p-4 md:p-8">
+        <div className="flex min-h-screen flex-col bg-white p-4 sm:p-6 md:p-8">
             <div className="mx-auto w-full max-w-4xl">
-                <div className="mb-8 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold md:text-3xl">Business Card Details</h1>
+                <div className="mb-4 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Business Card Details</h1>
                     <Link href="/dashboard">
-                        <Button variant="outline">Back to Dashboard</Button>
+                        <Button variant="outline" className="w-full sm:w-auto">Back to Dashboard</Button>
                     </Link>
                 </div>
 
-                <div className="flex flex-col gap-8 rounded-lg bg-white p-4 shadow-lg md:p-8">
+                <div className="flex flex-col gap-6 sm:gap-8 rounded-lg bg-white p-4 sm:p-6 md:p-8 shadow-lg">
                     {/* Business Card Preview */}
-                    <div className="flex flex-col items-center justify-center gap-8">
+                    <div className="flex flex-col items-center justify-center gap-6 sm:gap-8">
                         {/* Front of the card */}
-                        <div className="relative h-[368px] w-full max-w-[552px] overflow-hidden rounded-lg bg-white p-8 shadow-md">
+                        <div className="relative w-full aspect-[1.53/1] max-w-[552px] overflow-hidden rounded-lg bg-white p-4 sm:p-6 md:p-8 shadow-md">
                             {/* Access Bank Logo */}
                             <div className="z-50 w-full justify-end items-end flex">
-                                <img src="/access-logo.png" width={200} alt="Access Bank Logo" />
+                                <img src="/access-logo.png" className="w-32 sm:w-40 md:w-48" alt="Access Bank Logo" />
                             </div>
 
-                            <div className="">
-                                <h3 className="text-2xl font-bold text-[#FF5722]">{businessCard.fullName}</h3>
-                                <p className="text-lg font-medium text-black">{businessCard.position}</p>
+                            <div className="mt-2 sm:mt-4">
+                                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#FF5722]">{businessCard.fullName}</h3>
+                                <p className="text-base sm:text-lg font-medium text-black">{businessCard.position}</p>
 
-                                <div className="mt-6 text-base">
-                                    <p className="mb-1 w-[320px] font-semibold text-black">{address}</p>
+                                <div className="mt-4 sm:mt-6 text-sm sm:text-base">
+                                    <p className="mb-1 max-w-[320px] font-semibold text-black">{address}</p>
 
                                     <div className="flex items-start">
                                         <span className="mr-2 font-bold text-[#FF5722]">M</span>
@@ -113,17 +113,17 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
 
                                     <div className="flex items-start">
                                         <span className="mr-2 font-bold text-[#FF5722]">E</span>
-                                        <span className="font-semibold">{businessCard.email}</span>
+                                        <span className="font-semibold break-all">{businessCard.email}</span>
                                     </div>
                                 </div>
 
-                                <div className="text-right">
-                                    <span className="text-[#FF5722]">{website}</span>
+                                <div className="text-right mt-2 sm:mt-4">
+                                    <span className="text-[#FF5722] text-sm sm:text-base">{website}</span>
                                 </div>
                             </div>
 
                             {/* QR Code */}
-                            <div className="absolute bottom-24 right-8 h-[160px] w-[160px] overflow-hidden rounded-md">
+                            <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 h-[100px] w-[100px] sm:h-[120px] sm:w-[120px] md:h-[160px] md:w-[160px] overflow-hidden rounded-md">
                                 <img
                                     src={qrCodeUrl}
                                     alt={`QR Code for ${businessCard.username}`}
@@ -133,7 +133,7 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                         </div>
 
                         {/* Back of the card */}
-                        <div className="relative h-[368px] w-[550px] max-w-[550px] overflow-hidden rounded-lg bg-white shadow-md">
+                        <div className="relative w-full aspect-[1.53/1] max-w-[552px] overflow-hidden rounded-lg bg-white shadow-md">
                             {/* Blue section */}
                             <div
                                 className="absolute bottom-0 left-0 top-0 w-[65%] bg-[#0039CB]"
@@ -150,19 +150,16 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                             ></div>
 
                             {/* "more than banking" text */}
-                            <div
-                                className="absolute bottom-8 right-12 text-[1.5rem] font-bold text-[#FF5722]"
-                                style={{ fontFamily: "var(--font-helvetica-neue, Helvetica Neue, sans-serif)" }}
-                            >
+                            <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 text-base sm:text-lg md:text-2xl font-bold text-[#FF5722]">
                                 more than banking
                             </div>
                         </div>
                     </div>
 
                     {/* Download Options */}
-                    <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-center">
                         <Button
-                            className="w-full flex items-center justify-center gap-2 sm:w-auto"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm sm:text-base"
                             onClick={handleDownloadPDF}
                             disabled={isGenerating}
                         >
@@ -170,8 +167,8 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                             {isGenerating ? 'Generating PDF...' : 'Download PDF'}
                         </Button>
 
-                        <Link href={`/api/business-cards/vcard/${businessCard.username}`}>
-                            <Button variant="outline" className="w-full flex items-center justify-center gap-2 sm:w-auto">
+                        <Link href={`/api/business-cards/vcard/${businessCard.username}`} className="w-full sm:w-auto">
+                            <Button variant="outline" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
                                 <FileDown className="h-4 w-4" />
                                 Download vCard
                             </Button>
@@ -179,16 +176,17 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                     </div>
 
                     {/* Card Details */}
-                    <div className="mt-4 space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm">
-                        <h2 className="text-lg font-semibold">Card Information</h2>
-                        <p><strong>Name:</strong> {businessCard.fullName}</p>
-                        <p><strong>Position:</strong> {businessCard.position}</p>
-                        <p><strong>Email:</strong> {businessCard.email}</p>
-                        <p><strong>Phone:</strong> {businessCard.phone}</p>
-                        <p><strong>Username:</strong> {businessCard.username}</p>
-                        <p><strong>Created:</strong> {new Date(businessCard.createdAt).toLocaleDateString()}</p>
-                        <p><strong>Last Updated:</strong> {new Date(businessCard.updatedAt).toLocaleDateString()}</p>
-                        <p><strong>Downloads:</strong> {businessCard.downloads}</p>
+                    <div className="mt-2 sm:mt-4 space-y-3 sm:space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4 sm:p-6 text-sm sm:text-base">
+                        <h2 className="text-base sm:text-lg font-semibold">Card Information</h2>
+                        <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
+                            <p><strong>Name:</strong> {businessCard.fullName}</p>
+                            <p><strong>Position:</strong> {businessCard.position}</p>
+                            <p><strong>Email:</strong> <span className="break-all">{businessCard.email}</span></p>
+                            <p><strong>Phone:</strong> {businessCard.phone}</p>
+                            <p><strong>Username:</strong> {businessCard.username}</p>
+                            <p><strong>Created:</strong> {new Date(businessCard.createdAt).toLocaleDateString()}</p>
+                            <p><strong>Last Updated:</strong> {new Date(businessCard.updatedAt).toLocaleDateString()}</p>
+                        </div>
                     </div>
                 </div>
             </div>

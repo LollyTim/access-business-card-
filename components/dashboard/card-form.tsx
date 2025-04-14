@@ -164,127 +164,175 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-                <Label htmlFor="fullName" className="required">Full Name</Label>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <User className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Input
-                        id="fullName"
-                        name="fullName"
-                        placeholder="Full name"
-                        className="pl-10"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="position" className="required">Position</Label>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Building className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Input
-                        id="position"
-                        name="position"
-                        placeholder="Your Position"
-                        className="pl-10"
-                        value={formData.position}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="phone" className="required">Phone</Label>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Phone className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Input
-                        id="phone"
-                        name="phone"
-                        placeholder="+234 000 0000 000"
-                        className="pl-10"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="email" className="required">Email</Label>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="youremail@accessbankplc.com"
-                        className="pl-10"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="image">Profile Image (Optional)</Label>
-                <div className="flex items-center gap-4">
-                    <Input
-                        id="image"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="cursor-pointer"
-                    />
-                    {imagePreview && (
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            onClick={removeImage}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    )}
-                </div>
-                {imagePreview && (
-                    <div className="mt-2">
-                        <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="h-32 w-32 object-cover rounded-lg"
+        <form onSubmit={handleSubmit} className="w-full max-w-full md:max-w-lg lg:max-w-2xl mx-auto px-4 md:px-0 space-y-4 sm:space-y-5 md:space-y-6">
+            <div className="grid gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                {/* Full Name Field */}
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
+                    <Label
+                        htmlFor="fullName"
+                        className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
+                            <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
+                        </div>
+                        <Input
+                            id="fullName"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            className="pl-7 sm:pl-9 h-8 sm:h-9 md:h-10 text-xs sm:text-sm bg-background"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
-                )}
-            </div>
+                </div>
 
-            <div className="mt-2 rounded-md bg-gray-100 p-3 text-sm text-gray-700">
-                <p className="font-medium">QR Code Information:</p>
-                <p>• Generated using QR Code Monkey API</p>
-                <p>• Links to: {process.env.NEXT_PUBLIC_APP_URL}/{username}</p>
-                <p>• Includes Access Bank logo in center</p>
-            </div>
+                {/* Position Field */}
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
+                    <Label
+                        htmlFor="position"
+                        className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Position <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
+                            <Building className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
+                        </div>
+                        <Input
+                            id="position"
+                            name="position"
+                            placeholder="Enter your position"
+                            className="pl-7 sm:pl-9 h-8 sm:h-9 md:h-10 text-xs sm:text-sm bg-background"
+                            value={formData.position}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
 
-            <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting || isGenerating}
-            >
-                {isSubmitting || isGenerating ? "Creating..." : "Generate Business Card"}
-            </Button>
+                {/* Phone Field */}
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
+                    <Label
+                        htmlFor="phone"
+                        className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Phone Number <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
+                            <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
+                        </div>
+                        <Input
+                            id="phone"
+                            name="phone"
+                            placeholder="+234 000 0000 000"
+                            className="pl-7 sm:pl-9 h-8 sm:h-9 md:h-10 text-xs sm:text-sm bg-background"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
+                    <Label
+                        htmlFor="email"
+                        className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Email Address <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-2 sm:pl-3 pointer-events-none">
+                            <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
+                        </div>
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="youremail@accessbankplc.com"
+                            className="pl-7 sm:pl-9 h-8 sm:h-9 md:h-10 text-xs sm:text-sm bg-background"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+
+                {/* Profile Image Field */}
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
+                    <Label
+                        htmlFor="image"
+                        className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Profile Image
+                    </Label>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start">
+                        <div className="flex-1 flex items-center gap-2 sm:gap-3 w-full">
+                            <div className="relative flex-1">
+                                <Input
+                                    id="image"
+                                    name="image"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="cursor-pointer text-xs sm:text-sm h-8 sm:h-9 md:h-10 file:mr-2 sm:file:mr-3 md:file:mr-4 file:py-1 sm:file:py-1.5 md:file:py-2 file:px-2 sm:file:px-3 md:file:px-4 file:rounded-md file:border-0 file:text-xs sm:file:text-sm file:bg-secondary file:text-secondary-foreground hover:file:bg-secondary/80 w-full"
+                                />
+                            </div>
+                            {imagePreview && (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 shrink-0"
+                                    onClick={removeImage}
+                                >
+                                    <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </Button>
+                            )}
+                        </div>
+                        {imagePreview && (
+                            <div className="sm:ml-0 relative w-16 h-16 sm:w-18 md:w-20 sm:h-18 md:h-20 rounded-lg overflow-hidden border flex-shrink-0">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* QR Code Info */}
+                <div className="rounded-lg bg-secondary/50 p-2.5 sm:p-3 md:p-4 text-xs sm:text-sm space-y-1 sm:space-y-1.5">
+                    <p className="font-medium text-secondary-foreground">QR Code Information:</p>
+                    <div className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
+                        <p>• Generated using QR Code Monkey API</p>
+                        <p>• Links to: {process.env.NEXT_PUBLIC_APP_URL}/{username}</p>
+                        <p>• Includes Access Bank logo in center</p>
+                    </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                    type="submit"
+                    className="w-full h-8 sm:h-9 md:h-10 text-xs sm:text-sm font-medium mt-1 sm:mt-2"
+                    disabled={isSubmitting || isGenerating}
+                >
+                    {isSubmitting || isGenerating ? (
+                        <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+                            <span className="h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
+                            Creating...
+                        </span>
+                    ) : (
+                        "Generate Business Card"
+                    )}
+                </Button>
+            </div>
         </form>
     );
-} 
+}

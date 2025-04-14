@@ -5,17 +5,16 @@ import { TableSkeleton } from "@/components/skeletons/table-skeleton";
 
 export default async function DashboardPage() {
     return (
-        <div className="min-h-screen bg-white p-8">
-            <div className="mx-auto max-w-7xl space-y-8">
-                <div>
-                    <h1 className="text-3xl font-bold">Dashboard</h1>
-                    <p className="text-gray-500">Manage your business cards</p>
+        <div className="min-h-screen bg-white px-4 py-6 sm:p-6 md:p-8">
+            <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
+                <div className="space-y-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+                    <p className="text-sm sm:text-base text-gray-500">Manage your business cards</p>
                 </div>
 
                 <CardFormWrapper />
 
-                <div>
-                    <h2 className="text-xl font-semibold mb-4">Your Business Cards</h2>
+                <div className="space-y-3 sm:space-y-4">
                     <Suspense fallback={<TableSkeleton />}>
                         <BusinessCardsTable />
                     </Suspense>
