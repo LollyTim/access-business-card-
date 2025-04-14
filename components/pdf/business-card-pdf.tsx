@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
         width: '20mm',
         height: '20mm',
     },
-    // Back of card styles
     backCard: {
         width: '85mm',
         height: '55mm',
