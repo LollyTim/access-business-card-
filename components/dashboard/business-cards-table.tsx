@@ -14,11 +14,51 @@ import { Download, Eye, FileDown, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 import { BusinessCard } from "@/types/business-card";
+import { generateBusinessCardPDF } from "@/lib/pdf-generator";
+import { toast } from "sonner";
+
+function generateQRCodeUrl(businessCard: BusinessCard) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const cardUrl = `${baseUrl}/${businessCard.username}`;
+
+    const config = {
+        body: "pointed",
+        eye: "frame14",
+        eyeBall: "ball14",
+        erf1: [],
+        erf2: ["fh"],
+        erf3: ["fv"],
+        brf1: [],
+        brf2: ["fh"],
+        brf3: ["fv"],
+        bodyColor: "#000000",
+        bgColor: "#FFFFFF",
+        eye1Color: "#000000",
+        eye2Color: "#000000",
+        eye3Color: "#000000",
+        eyeBall1Color: "#000000",
+        eyeBall2Color: "#000000",
+        eyeBall3Color: "#000000",
+        gradientOnEyes: false,
+        logoMode: "clean",
+        logo: "https://asset.brandfetch.io/idPXJmyni4/idSLulezX4.png",
+    };
+
+    const params = new URLSearchParams({
+        data: cardUrl,
+        size: "360",
+        config: JSON.stringify(config),
+        file: "svg"
+    });
+
+    return `/api/qr-code?${params.toString()}`;
+}
 
 export function BusinessCardsTable() {
     const [businessCards, setBusinessCards] = useState<BusinessCard[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { toast } = useToast();
+    const [generatingPDF, setGeneratingPDF] = useState<string | null>(null);
+    const { toast: uiToast } = useToast();
 
     const fetchBusinessCards = async () => {
         try {
@@ -31,7 +71,7 @@ export function BusinessCardsTable() {
             setBusinessCards(data);
         } catch (error) {
             console.error('Error fetching business cards:', error);
-            toast({
+            uiToast({
                 title: "Error",
                 description: "Failed to fetch business cards. Please try again.",
                 variant: "destructive",
@@ -44,6 +84,31 @@ export function BusinessCardsTable() {
     useEffect(() => {
         fetchBusinessCards();
     }, []);
+
+    const handleDownloadPDF = async (card: BusinessCard) => {
+        try {
+            setGeneratingPDF(card.id);
+            const qrCodeUrl = generateQRCodeUrl(card);
+            const pdfBlob = await generateBusinessCardPDF(card, qrCodeUrl);
+
+            // Create a download link
+            const url = window.URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${card.fullName.replace(/\s+/g, '-').toLowerCase()}-business-card.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success('PDF generated successfully');
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            toast.error('Failed to generate PDF');
+        } finally {
+            setGeneratingPDF(null);
+        }
+    };
 
     return (
         <div className="space-y-4">
@@ -95,12 +160,11 @@ export function BusinessCardsTable() {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            asChild
                                             className="h-8 w-8 p-0"
+                                            onClick={() => handleDownloadPDF(card)}
+                                            disabled={generatingPDF === card.id}
                                         >
-                                            <Link href={`/api/business-cards/pdf/${card.username}`}>
-                                                <FileDown className="h-4 w-4" />
-                                            </Link>
+                                            <FileDown className={`h-4 w-4 ${generatingPDF === card.id ? 'animate-spin' : ''}`} />
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -150,12 +214,11 @@ export function BusinessCardsTable() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    asChild
                                     className="h-8 w-8 p-0"
+                                    onClick={() => handleDownloadPDF(card)}
+                                    disabled={generatingPDF === card.id}
                                 >
-                                    <Link href={`/api/business-cards/pdf/${card.username}`}>
-                                        <FileDown className="h-4 w-4" />
-                                    </Link>
+                                    <FileDown className={`h-4 w-4 ${generatingPDF === card.id ? 'animate-spin' : ''}`} />
                                 </Button>
                                 <Button
                                     variant="outline"

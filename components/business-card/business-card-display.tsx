@@ -96,15 +96,15 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                         <div className="relative w-full aspect-[1.53/1] max-w-[552px] overflow-hidden rounded-lg bg-white p-4 sm:p-6 md:p-8 shadow-md">
                             {/* Access Bank Logo */}
                             <div className="z-50 w-full justify-end items-end flex">
-                                <img src="/access-logo.png" className="w-32 sm:w-40 md:w-48" alt="Access Bank Logo" />
+                                <img src="/access-logo.png" className="w-28 sm:w-40 md:w-48" alt="Access Bank Logo" />
                             </div>
 
                             <div className="mt-2 sm:mt-4">
                                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#FF5722]">{businessCard.fullName}</h3>
                                 <p className="text-base sm:text-lg font-medium text-black">{businessCard.position}</p>
 
-                                <div className="mt-4 sm:mt-6 text-sm sm:text-base">
-                                    <p className="mb-1 max-w-[320px] font-semibold text-black">{address}</p>
+                                <div className="mt-4 sm:mt-6 text-xs sm:text-base">
+                                    <p className="mb-1 max-w-[260px] sm:max-w-[320px] md:max-w-[320px] font-semibold text-black">{address}</p>
 
                                     <div className="flex items-start">
                                         <span className="mr-2 font-bold text-[#FF5722]">M</span>
@@ -123,7 +123,7 @@ export function BusinessCardDisplay({ businessCard }: BusinessCardDisplayProps) 
                             </div>
 
                             {/* QR Code */}
-                            <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 h-[100px] w-[100px] sm:h-[120px] sm:w-[120px] md:h-[160px] md:w-[160px] overflow-hidden rounded-md">
+                            <div className="absolute bottom-16 right-4 sm:right-6 md:right-8 h-[100px] w-[100px] sm:h-[120px] sm:w-[120px] md:h-[160px] md:w-[160px] overflow-hidden rounded-md">
                                 <img
                                     src={qrCodeUrl}
                                     alt={`QR Code for ${businessCard.username}`}
