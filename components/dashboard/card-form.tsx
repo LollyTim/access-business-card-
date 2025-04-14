@@ -182,7 +182,7 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
                             id="fullName"
                             name="fullName"
                             placeholder="Enter your full name"
-                            className="pl-8 h-9 text-[13px] bg-background max-w-full w-[300px]"
+                            className="pl-8 h-9 text-[13px] bg-background max-w-full w-[300px] sm:w-full"
                             value={formData.fullName}
                             onChange={handleChange}
                             required
@@ -206,7 +206,7 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
                             id="position"
                             name="position"
                             placeholder="Enter your position"
-                            className="pl-8 h-9 text-[13px] bg-background max-w-full w-[300px]"
+                            className="pl-8 h-9 text-[13px] bg-background max-w-full w-[300px] sm:w-full"
                             value={formData.position}
                             onChange={handleChange}
                             required
@@ -255,7 +255,7 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
                             name="email"
                             type="email"
                             placeholder="youremail@accessbankplc.com"
-                            className="pl-8 h-9 text-[13px] bg-background max-w-full w-[300px]"
+                            className="pl-8 h-9 text-[13px] bg-backgroundmax-w-full w-[300px] sm:w-full"
                             value={formData.email}
                             onChange={handleChange}
                             required
