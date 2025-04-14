@@ -48,13 +48,12 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const updatedData = { ...formData, [name]: value.trim() } as FormData;
 
         if (name === 'email') {
             const username = value.split('@')[0].toLowerCase();
-            setFormData({ ...updatedData, username } as FormData);
+            setFormData({ ...formData, [name]: value, username });
         } else {
-            setFormData(updatedData);
+            setFormData({ ...formData, [name]: value });
         }
     };
 
@@ -122,24 +121,23 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!validateForm(formData)) {
+        // Create a clean data object with trimmed values for validation
+        const trimmedData = {
+            ...formData,
+            fullName: formData.fullName.trim(),
+            position: formData.position.trim(),
+            phone: formData.phone.trim(),
+            email: formData.email.trim(),
+        };
+
+        if (!validateForm(trimmedData)) {
             return;
         }
 
         setIsGenerating(true);
         try {
-            // Create a clean data object for submission
-            const submissionData: FormData = {
-                fullName: formData.fullName.trim(),
-                position: formData.position.trim(),
-                phone: formData.phone.trim(),
-                email: formData.email.trim(),
-                image: formData.image // This should be the base64 string
-            };
-
-            console.log('Submitting form with image:', !!submissionData.image);
-            await onSubmit(submissionData);
-            console.log('Form submitted successfully');
+            // Submit the trimmed data
+            await onSubmit(trimmedData);
 
             // Reset form after successful submission
             setFormData({
@@ -306,8 +304,6 @@ export function CardForm({ onSubmit, isSubmitting }: CardFormProps) {
                         )}
                     </div>
                 </div>
-
-
 
                 {/* Submit Button */}
                 <Button

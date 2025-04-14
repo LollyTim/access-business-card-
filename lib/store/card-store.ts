@@ -6,6 +6,7 @@ export interface FormData {
   phone: string;
   email: string;
   image: string | null;
+  username?: string;
 }
 
 interface CardStore {
