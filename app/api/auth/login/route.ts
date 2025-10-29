@@ -35,6 +35,21 @@ export async function POST(request: Request) {
       });
     } catch (dbError) {
       console.error("Database error:", dbError);
+
+      // Handle Prisma initialization errors (connection issues)
+      if (
+        dbError instanceof Prisma.PrismaClientInitializationError ||
+        (dbError as any)?.code === "P1001"
+      ) {
+        console.error(
+          "Database connection error - Server may have closed connection"
+        );
+        return NextResponse.json(
+          { message: "Database connection error. Please try again." },
+          { status: 503 }
+        );
+      }
+
       if (dbError instanceof Prisma.PrismaClientKnownRequestError) {
         return NextResponse.json(
           { message: "Database error occurred" },

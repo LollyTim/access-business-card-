@@ -4,11 +4,12 @@ import { jsPDF } from "jspdf";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { format: string; username: string } }
+  { params }: { params: Promise<{ format: string; username: string }> }
 ) {
   try {
+    const { format, username } = await params;
     const businessCard = await prisma.businessCard.findUnique({
-      where: { username: params.username },
+      where: { username },
     });
 
     if (!businessCard) {
@@ -21,7 +22,7 @@ export async function GET(
       data: { downloads: { increment: 1 } },
     });
 
-    if (params.format === "pdf") {
+    if (format === "pdf") {
       // Create PDF with business card dimensions (90x50mm)
       const doc = new jsPDF({
         orientation: "landscape",
@@ -84,7 +85,7 @@ export async function GET(
       );
 
       return new NextResponse(pdfBuffer, { headers });
-    } else if (params.format === "vcard") {
+    } else if (format === "vcard") {
       // Generate vCard format
       const vcard = [
         "BEGIN:VCARD",

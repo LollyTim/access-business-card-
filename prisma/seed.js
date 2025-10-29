@@ -2,6 +2,7 @@ import { PrismaClient } from "../lib/generated/prisma/index.js";
 import bcryptjs from "bcryptjs";
 const { genSalt, hash } = bcryptjs;
 
+// Initialize PrismaClient - it will read DATABASE_URL from environment
 const prisma = new PrismaClient();
 
 async function main() {

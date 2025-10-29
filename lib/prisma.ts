@@ -1,17 +1,13 @@
 import { PrismaClient } from "./generated/prisma";
-import { withAccelerate } from "@prisma/extension-accelerate";
 
-// Parse DATABASE_URL from environment and handle potential issues
-const getDatabaseUrl = () => {
+const validateDatabaseUrl = () => {
   const envUrl = process.env.DATABASE_URL;
   if (!envUrl) {
     console.error("DATABASE_URL environment variable not found");
     throw new Error("DATABASE_URL environment variable not found");
   }
   try {
-    // Validate URL format
     new URL(envUrl);
-    return envUrl;
   } catch (error) {
     console.error(
       "Invalid DATABASE_URL format:",
@@ -22,32 +18,27 @@ const getDatabaseUrl = () => {
 };
 
 const prismaClientSingleton = () => {
-  try {
-    return new PrismaClient({
-      log: ["query", "error", "warn"],
-      datasources: {
-        db: {
-          url: getDatabaseUrl(),
-        },
+  validateDatabaseUrl();
+
+  return new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
       },
-    }).$extends(withAccelerate());
-  } catch (error) {
-    console.error(
-      "Failed to initialize Prisma client:",
-      error instanceof Error ? error.message : String(error)
-    );
-    throw error;
-  }
+    },
+  });
 };
 
 declare global {
-  var prisma: ReturnType<typeof prismaClientSingleton> | undefined;
+  // eslint-disable-next-line no-var
+  var prismaGlobal: ReturnType<typeof prismaClientSingleton> | undefined;
 }
 
-export const prisma = globalThis.prisma ?? prismaClientSingleton();
+export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
 if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = prisma;
+  globalThis.prismaGlobal = prisma;
 }
 
 export type PrismaType = ReturnType<typeof prismaClientSingleton>;

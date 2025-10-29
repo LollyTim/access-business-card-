@@ -7,15 +7,16 @@ import Image from "next/image";
 import { Metadata } from "next";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         username: string;
-    };
+    }>;
 }
 
 export async function generateMetadata(
     { params }: PageProps
 ): Promise<Metadata> {
-    const businessCard = await getBusinessCard(params.username);
+    const { username } = await params;
+    const businessCard = await getBusinessCard(username);
     return {
         title: `${businessCard.fullName} - Access Bank Business Card`,
         description: `${businessCard.position} at Access Bank`,
@@ -43,7 +44,8 @@ function getInitials(name: string) {
 }
 
 export default async function ProfilePage({ params }: PageProps) {
-    const businessCard = await getBusinessCard(params.username);
+    const { username } = await params;
+    const businessCard = await getBusinessCard(username);
     const initials = getInitials(businessCard.fullName);
 
     return (
